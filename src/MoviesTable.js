@@ -1,52 +1,51 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { FixedSizeList } from 'react-window';
+import MovieRow from './MovieRow';
+import { movieType } from './entities-types';
+
 import styles from './MoviesTable.module.css';
 
 const propTypes = {
-  children: PropTypes.arrayOf(
-    PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      year: PropTypes.number,
-      genre: PropTypes.string,
-      director: PropTypes.string,
-      cast: PropTypes.string,
-      notes: PropTypes.string,
-    })
-  ).isRequired,
+  children: PropTypes.arrayOf(movieType),
 };
 
-const MoviesTable = ({ children: movies }) => {
-  return (
-    <table className={styles.root}>
-      <thead>
-        <tr>
-          <th width="20%">Title</th>
-          <th width="5%">Year</th>
-          <th>Genre</th>
-          <th>Director</th>
-          <th>Cast</th>
-          <th>Notes</th>
-        </tr>
-      </thead>
+const defaultProps = {
+  children: [],
+};
 
-      <tbody>
-        {movies.map(movie => (
-          <tr
-            key={`${movie.title}-${movie.year}-${movie.director}-${movie.genre}-${movie.cast}`}
-          >
-            <td>{movie.title}</td>
-            <td>{movie.year}</td>
-            <td>{movie.genre}</td>
-            <td>{movie.director}</td>
-            <td>{movie.cast}</td>
-            <td>{movie.notes}</td>
-          </tr>
+const COLS_ORDER = ['title', 'year', 'genre', 'director', 'cast', 'notes'];
+
+const MoviesTable = ({ children: movies }) => {
+  const MoviesTableInnerRow = ({ index, style }) => (
+    <MovieRow style={style} columnsOrder={COLS_ORDER}>
+      {movies[index]}
+    </MovieRow>
+  );
+
+  return (
+    <div className={styles.root}>
+      <div className={`${styles.row} ${styles.head}`}>
+        {COLS_ORDER.map(column => (
+          <div key={column} className={`${styles.cell} ${styles[column]}`}>
+            {column}
+          </div>
         ))}
-      </tbody>
-    </table>
+      </div>
+
+      <FixedSizeList
+        height={600}
+        width="100%"
+        itemSize={60}
+        itemCount={movies.length}
+      >
+        {MoviesTableInnerRow}
+      </FixedSizeList>
+    </div>
   );
 };
 
 MoviesTable.propTypes = propTypes;
+MoviesTable.defaultProps = defaultProps;
 
 export default MoviesTable;

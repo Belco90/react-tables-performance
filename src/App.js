@@ -1,6 +1,6 @@
 import React from 'react';
 import MoviesTable from './MoviesTable';
-import styles from 'App.module.css';
+import styles from './App.module.css';
 
 const DATA_SET_SIZE_URLS = {
   small: 'https://int.conducerevel.com/test/data/smov.json',
