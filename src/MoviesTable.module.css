@@ -1,0 +1,16 @@
+.root {
+  border-collapse: collapse;
+}
+
+.root th,
+.root td {
+  padding: 0.75rem;
+}
+
+.root thead th {
+  text-align: left;
+}
+
+.root tbody tr td {
+  border-top: solid 1px lightgray;
+}

@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styles from './MoviesTable.module.css';
 
 const propTypes = {
   children: PropTypes.arrayOf(
@@ -16,11 +17,11 @@ const propTypes = {
 
 const MoviesTable = ({ children: movies }) => {
   return (
-    <table>
+    <table className={styles.root}>
       <thead>
         <tr>
-          <th>Title</th>
-          <th>Year</th>
+          <th width="20%">Title</th>
+          <th width="5%">Year</th>
           <th>Genre</th>
           <th>Director</th>
           <th>Cast</th>
