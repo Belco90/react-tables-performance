@@ -1,68 +1,51 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Features
 
-## Available Scripts
+- You have two buttons for fetching small or large data set whenever you
+  want!
+- You can switch between "regular" render or virtualized render. ⚠️
+  **Note that when disabling virtualized render the page will freeze a
+  few seconds because of the huge amount of elements from the data set
+  that will be rendered!**
+- TODO: filtering
+- TODO: sorting
 
-In the project directory, you can run:
+### Dependencies
 
-### `yarn start`
+- `react-scripts`: this is Create React App, the quickest and easiest way of starting a new React project
+- `react-window`: for virtualizing the table as it would be too heavy to
+  render the whole large data set when we only need to render what the
+  user can see in the viewport (you can check this yourself when
+  toggling the "Use virtualization" option)
+- `prettier`: just for autoformatting the code
+- `husky` and `lint-staged`: for autoformatting the code when committing
+  changes
+- `prop-types`: include props info for React components
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Technical decisions
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- **Showing ellipsis for each cell when content doesn't fit**: to avoid
+  rows too high I'm fixing a narrow value and then hiding overflow
+  content with an ellipsis so you can see more rows at the same time. I
+  assumed it's more important to be able to see several rows than see
+  the full info about each cell as that could imply just seeing 3 or 4
+  at the same time. You are still able to see the full content by
+  hovering the mouse in a particular cell with content (through title
+  attribute).
+- **Fixing table and rows height**: these two have been fixed because of
+  the virtualization as the height of the table and the rows must be
+  known. I could have play around with dynamic row heights but I think
+  is out of the scope of the test. Additionally, having a table height
+  fixed will help to see the rows while not loosing the heads and action
+  buttons.
+- **Non-responsive table**: as mentioned in the test description, this
+  table is not supposed to work on mobile or being responsive, so I just
+  made sure it works fine with a viewport greater than 992px, which
+  bootstrap and other UI framework consider as the minimum width for
+  desktops. Anyway, the columns widths are fixed with percentages so it
+  will look better in wider screens.
+- **Custom table elements**: I didn't use the HTML `table` element
+  because of the limitation from virtualizing the list (responsiveness
+  wouldn't be a problem with table tag from the previous point), so I
+  made my custom table layout with divs elements and flex styling. I
+  could have used some UI framework for it but it was a simple layout so
+  I coded it myself.
