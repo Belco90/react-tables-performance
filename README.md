@@ -20,6 +20,7 @@
 - `husky` and `lint-staged`: for autoformatting the code when committing
   changes
 - `prop-types`: include props info for React components
+- `lodash`: TODO
 
 ### Technical decisions
 
