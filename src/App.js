@@ -10,6 +10,7 @@ const DATA_SET_SIZE_URLS = {
 function App() {
   const [moviesData, setMoviesData] = React.useState(null);
   const [isFetching, setIsFetching] = React.useState(false);
+  const [isVirtualized, setIsVirtualized] = React.useState(true);
 
   const fetchMoviesDataSet = async size => {
     const url = DATA_SET_SIZE_URLS[size];
@@ -36,13 +37,25 @@ function App() {
         <button onClick={() => fetchMoviesDataSet('large')}>
           Get large data set
         </button>
+        <label>
+          <input
+            type="checkbox"
+            checked={isVirtualized}
+            onChange={event => {
+              setIsVirtualized(event.currentTarget.checked);
+            }}
+          />
+          Use virtualization
+        </label>
       </div>
 
       <hr />
 
-      {isFetching && <span>Fetching...</span>}
+      {isFetching && <span>Loading (fetching and rendering)...</span>}
 
-      {!isFetching && moviesData && <MoviesTable>{moviesData}</MoviesTable>}
+      {!isFetching && moviesData && (
+        <MoviesTable isVirtualized={isVirtualized}>{moviesData}</MoviesTable>
+      )}
     </div>
   );
 }
