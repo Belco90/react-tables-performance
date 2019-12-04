@@ -6,8 +6,9 @@
   **Note that when disabling virtualized render the page will freeze a
   few seconds because of the huge amount of elements from the data set
   that will be rendered!**
+- Sort any column (only once at a time) by clicking in the column head
+  to sort asc, sort desc and remove sort
 - TODO: filtering
-- TODO: sorting
 
 ### Dependencies
 
@@ -20,7 +21,11 @@
 - `husky` and `lint-staged`: for autoformatting the code when committing
   changes
 - `prop-types`: include props info for React components
-- `lodash`: TODO
+- `lodash`: I only want some utils from lodash but they recommend to
+  install the whole package (and it was already in the project as a
+  dependency of babel). I'm using orderBy util for sorting.
+- `classnames`: util for merging different classNames in a component
+  under different conditions
 
 ### Technical decisions
 
@@ -50,3 +55,8 @@
   made my custom table layout with divs elements and flex styling. I
   could have used some UI framework for it but it was a simple layout so
   I coded it myself.
+- **Sorting**: I'm relying on lodash.orderBy for this and the sorting
+  process is quite fast so the table is rendered sorted almost
+  instantly. There are still some edge cases to address for strings with
+  whitespaces at the beginning or removing special characters at the
+  start of the values
