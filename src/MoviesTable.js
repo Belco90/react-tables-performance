@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList } from 'react-window';
-import { orderBy } from 'lodash';
+import { orderBy, deburr } from 'lodash';
 import cn from 'classnames';
 import MovieRow from './MovieRow';
 import MoviesTableVirtualizedRow from './MoviesTableVirtualizedRow';
@@ -23,7 +23,12 @@ const defaultProps = {
 
 const ROW_HEIGHT = 60;
 const getItemKey = (index, data) => getMovieId(data[index]);
-const sanitizeString = string => string.toLowerCase().trim();
+const sanitizeString = element =>
+  deburr(
+    String(element)
+      .toLowerCase()
+      .trim()
+  );
 
 const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
   const [filteredMovies, setFilteredMovies] = React.useState(initialMovies);
@@ -55,11 +60,22 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
     if (!sortCriteria) {
       setRefinedMovies(filteredMovies);
     } else if (sortCriteria.startsWith('-')) {
+      const splittedSortCriteria = sortCriteria.replace('-', '');
       setRefinedMovies(
-        orderBy(filteredMovies, [sortCriteria.replace('-', '')], ['desc'])
+        orderBy(
+          filteredMovies,
+          [movie => sanitizeString(movie[splittedSortCriteria])],
+          ['desc']
+        )
       );
     } else {
-      setRefinedMovies(orderBy(filteredMovies, [sortCriteria], ['asc']));
+      setRefinedMovies(
+        orderBy(
+          filteredMovies,
+          [movie => sanitizeString(movie[sortCriteria])],
+          ['asc']
+        )
+      );
     }
   }, [sortCriteria, filteredMovies]);
 
