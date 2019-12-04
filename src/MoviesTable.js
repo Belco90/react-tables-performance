@@ -21,28 +21,54 @@ const defaultProps = {
 };
 
 const ROW_HEIGHT = 60;
+const getItemKey = (index, data) => getMovieId(data[index]);
 
-const MoviesTable = ({ children: movies, isVirtualized }) => {
-  const [sortedMovies, setSortedMovies] = React.useState(movies);
+const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
+  const [refinedMovies, setRefinedMovies] = React.useState(initialMovies);
+  const [sortCriteria, setSortCriteria] = React.useState(null);
 
-  /*
-  TODO:
-    - sort by ascending/descending/unsort
-    - show sorting indicator
+  /**
+   * This sorts the table by a particular criteria.
+   *
+   * The same criteria iterates like this: no sorted --> asc --> desc --> no sorted
+   *
+   * Desc sorting is represented with a '-' prefix.
+   * @param {string} selectedCriteria - new criteria selected to sort by
    */
-  const sortMoviesBy = criteria => {
-    setSortedMovies(sortBy(sortedMovies, criteria));
+  const sortMoviesBy = selectedCriteria => {
+    let newMovies = initialMovies;
+    let newSortCriteria = null;
+
+    if (sortCriteria === selectedCriteria) {
+      // this means it was sorted asc and same criteria applies, then we have to sort desc now
+      newSortCriteria = `-${selectedCriteria}`;
+      newMovies = refinedMovies.reverse();
+    } else if (!sortCriteria) {
+      // this means new criteria applies, then we need to sort asc
+      newSortCriteria = selectedCriteria;
+      newMovies = sortBy(initialMovies, selectedCriteria);
+    }
+    // this means it was sorted desc and same criteria applies, then we need to remove sorting
+    // which is the init value when declaring the vars at the beginning
+
+    setSortCriteria(newSortCriteria);
+    setRefinedMovies(newMovies);
   };
 
   return (
-    <MoviesContextProvider movies={sortedMovies}>
+    <MoviesContextProvider movies={refinedMovies}>
       <div className={styles.root}>
         <div className={`${styles.row} ${styles.head}`}>
           {COLS_ORDER.map(column => (
-            <div key={column} className={`${styles.cell} ${styles[column]}`}>
-              <div role="button" onClick={() => sortMoviesBy(column)}>
-                {column}
-              </div>
+            <div
+              key={column}
+              className={`${styles.cell} ${styles[column]}`}
+              role="button"
+              tabIndex="0"
+              onClick={() => sortMoviesBy(column)}
+            >
+              {/* TODO: show sorting indicator with classnames */}
+              {column}
             </div>
           ))}
         </div>
@@ -52,12 +78,14 @@ const MoviesTable = ({ children: movies, isVirtualized }) => {
             height={600}
             width="100%"
             itemSize={60}
-            itemCount={movies.length}
+            itemCount={refinedMovies.length}
+            itemData={refinedMovies}
+            itemKey={getItemKey}
           >
             {MoviesTableVirtualizedRow}
           </FixedSizeList>
         ) : (
-          sortedMovies.map(movie => (
+          refinedMovies.map(movie => (
             <MovieRow
               key={getMovieId(movie)}
               columnsOrder={COLS_ORDER}
