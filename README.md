@@ -27,7 +27,8 @@ http://stingy-deer.surge.sh/
 - `prop-types`: include props info for React components
 - `lodash`: I only want some utils from lodash but they recommend to
   install the whole package (and it was already in the project as a
-  dependency of babel). I'm using orderBy util for sorting.
+  dependency of babel). I'm using `orderBy` util for sorting and
+  `deburr` for sanitizing strings.
 - `classnames`: util for merging different classNames in a component
   under different conditions
 
