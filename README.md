@@ -62,21 +62,22 @@ http://stingy-deer.surge.sh/
 - **Filtering**: Really simple for this one as I just filter by checking
   if the title includes the value the user entered and then keep the
   filtered movies as a draft in a temporary state so the sorting can be
-  applied later. Here I'm doing insensitive comparison and trimming the
-  strings.
+  applied later. Here I'm doing insensitive comparison, trimming the
+  strings and deburring characters. Ideally I would delegate this to
+  corresponding API too but obviously that's not possible for this test.
 - **Sorting**: I'm relying on lodash.orderBy for this and the sorting
   process is quite fast so the table is rendered sorted almost
   instantly. The sort is always executed over the filtered movies list
   but the performance is really good anyway. There are still some edge
-  cases to address for strings with whitespaces at the beginning or
-  removing special characters at the start of the values. Ideally I
-  would delegate this to corresponding API but obviously that's not
+  cases to address for strings with special characters at the start of
+  the values but most of them are addressed properly as insensitive
+  comparison, trim strings and deburr characters. Ideally I would
+  delegate this to corresponding API too but obviously that's not
   possible for this test.
 
 ### Improvements
 
-- Sanitize fields for sorting: ignoring weird chars and whitespaces at
-  the beginning, apply insensitive comparison, etc
+- Sanitize fields for sorting: removing weird chars from the beginning
 - Handle fetch errors
 - Apply debouncing while user type on filter title input so table do the
   filtering when user has stopped writing (500ms for example) and we
