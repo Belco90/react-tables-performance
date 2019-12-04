@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList } from 'react-window';
-import { sortBy } from 'lodash';
+import { orderBy } from 'lodash';
 import MovieRow from './MovieRow';
 import MoviesTableVirtualizedRow from './MoviesTableVirtualizedRow';
 import { MoviesContextProvider } from './movies-context';
@@ -26,6 +26,12 @@ const getItemKey = (index, data) => getMovieId(data[index]);
 const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
   const [refinedMovies, setRefinedMovies] = React.useState(initialMovies);
   const [sortCriteria, setSortCriteria] = React.useState(null);
+  const listRef = React.createRef();
+
+  React.useEffect(() => {
+    // scroll to the top when movies updated by any reason
+    listRef.current.scrollToItem(0);
+  }, [initialMovies, refinedMovies]);
 
   /**
    * This sorts the table by a particular criteria.
@@ -42,11 +48,11 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
     if (sortCriteria === selectedCriteria) {
       // this means it was sorted asc and same criteria applies, then we have to sort desc now
       newSortCriteria = `-${selectedCriteria}`;
-      newMovies = refinedMovies.reverse();
+      newMovies = orderBy(initialMovies, [selectedCriteria], ['desc']);
     } else if (!sortCriteria) {
       // this means new criteria applies, then we need to sort asc
       newSortCriteria = selectedCriteria;
-      newMovies = sortBy(initialMovies, selectedCriteria);
+      newMovies = orderBy(initialMovies, [selectedCriteria], ['asc']);
     }
     // this means it was sorted desc and same criteria applies, then we need to remove sorting
     // which is the init value when declaring the vars at the beginning
@@ -81,6 +87,7 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
             itemCount={refinedMovies.length}
             itemData={refinedMovies}
             itemKey={getItemKey}
+            ref={listRef}
           >
             {MoviesTableVirtualizedRow}
           </FixedSizeList>
