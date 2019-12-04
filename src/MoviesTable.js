@@ -34,32 +34,41 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
     listRef.current.scrollToItem(0);
   }, [initialMovies, refinedMovies]);
 
+  React.useEffect(() => {
+    sortMovies();
+  }, [sortCriteria]);
+
+  const sortMovies = () => {
+    if (!sortCriteria) {
+      setRefinedMovies(initialMovies);
+    } else if (sortCriteria.startsWith('-')) {
+      setRefinedMovies(
+        orderBy(initialMovies, [sortCriteria.replace('-', '')], ['desc'])
+      );
+    } else {
+      setRefinedMovies(orderBy(initialMovies, [sortCriteria], ['asc']));
+    }
+  };
+
   /**
-   * This sorts the table by a particular criteria.
+   * This calculates the new sort order criteria.
    *
    * The same criteria iterates like this: no sorted --> asc --> desc --> no sorted
    *
    * Desc sorting is represented with a '-' prefix.
    * @param {string} selectedCriteria - new criteria selected to sort by
    */
-  const sortMoviesBy = selectedCriteria => {
-    let newMovies = initialMovies;
-    let newSortCriteria = null;
-
+  const setSortOrderCriteria = selectedCriteria => {
     if (sortCriteria === selectedCriteria) {
       // this means it was sorted asc and same criteria applies, then we have to sort desc now
-      newSortCriteria = `-${selectedCriteria}`;
-      newMovies = orderBy(initialMovies, [selectedCriteria], ['desc']);
+      setSortCriteria(`-${selectedCriteria}`);
     } else if (!sortCriteria) {
       // this means new criteria applies, then we need to sort asc
-      newSortCriteria = selectedCriteria;
-      newMovies = orderBy(initialMovies, [selectedCriteria], ['asc']);
+      setSortCriteria(selectedCriteria);
+    } else {
+      // this means it was sorted desc and same criteria applies, then we need to remove sorting
+      setSortCriteria(null);
     }
-    // this means it was sorted desc and same criteria applies, then we need to remove sorting
-    // which is the init value when declaring the vars at the beginning
-
-    setSortCriteria(newSortCriteria);
-    setRefinedMovies(newMovies);
   };
 
   return (
@@ -81,7 +90,7 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
               })}
               role="button"
               tabIndex="0"
-              onClick={() => sortMoviesBy(column)}
+              onClick={() => setSortOrderCriteria(column)}
             >
               {column}
             </div>
