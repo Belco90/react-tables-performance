@@ -23,32 +23,60 @@ const defaultProps = {
 
 const ROW_HEIGHT = 60;
 const getItemKey = (index, data) => getMovieId(data[index]);
+const sanitizeString = string => string.toLowerCase().trim();
 
 const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
+  const [filteredMovies, setFilteredMovies] = React.useState(initialMovies);
   const [refinedMovies, setRefinedMovies] = React.useState(initialMovies);
   const [sortCriteria, setSortCriteria] = React.useState(null);
+  const [filterTitleValue, setFilterTitleValue] = React.useState('');
   const listRef = React.createRef();
+
+  /**
+   * This will filter movies.
+   */
+  const filterMovies = React.useCallback(() => {
+    if (!filterTitleValue) {
+      // restore initial movies if filter removed
+      setFilteredMovies(initialMovies);
+    } else {
+      setFilteredMovies(
+        initialMovies.filter(movie =>
+          sanitizeString(movie.title).includes(filterTitleValue)
+        )
+      );
+    }
+  }, [filterTitleValue, initialMovies]);
+
+  /**
+   * This will sort movies already filtered.
+   */
+  const sortMovies = React.useCallback(() => {
+    if (!sortCriteria) {
+      setRefinedMovies(filteredMovies);
+    } else if (sortCriteria.startsWith('-')) {
+      setRefinedMovies(
+        orderBy(filteredMovies, [sortCriteria.replace('-', '')], ['desc'])
+      );
+    } else {
+      setRefinedMovies(orderBy(filteredMovies, [sortCriteria], ['asc']));
+    }
+  }, [sortCriteria, filteredMovies]);
 
   React.useEffect(() => {
     // scroll to the top when movies updated by any reason
     listRef.current.scrollToItem(0);
-  }, [initialMovies, refinedMovies]);
+  }, [initialMovies, refinedMovies, listRef]);
 
   React.useEffect(() => {
-    sortMovies();
-  }, [sortCriteria]);
+    // filter movies when title value updated
+    filterMovies();
+  }, [filterTitleValue, filterMovies]);
 
-  const sortMovies = () => {
-    if (!sortCriteria) {
-      setRefinedMovies(initialMovies);
-    } else if (sortCriteria.startsWith('-')) {
-      setRefinedMovies(
-        orderBy(initialMovies, [sortCriteria.replace('-', '')], ['desc'])
-      );
-    } else {
-      setRefinedMovies(orderBy(initialMovies, [sortCriteria], ['asc']));
-    }
-  };
+  React.useEffect(() => {
+    // sort movies when criteria updated or movies filtered
+    sortMovies();
+  }, [sortCriteria, filteredMovies, sortMovies]);
 
   /**
    * This calculates the new sort order criteria.
@@ -74,6 +102,18 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
   return (
     <MoviesContextProvider movies={refinedMovies}>
       <div className={styles.root}>
+        <div className={styles.filterWrapper}>
+          <label>
+            Filter by title:
+            <input
+              type="text"
+              placeholder="Type to start filtering"
+              onChange={event => {
+                setFilterTitleValue(sanitizeString(event.target.value));
+              }}
+            />
+          </label>
+        </div>
         <div className={`${styles.row} ${styles.head}`}>
           {COLS_ORDER.map(column => (
             <div

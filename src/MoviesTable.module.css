@@ -3,6 +3,10 @@
   margin-left: auto;
 }
 
+.filterWrapper {
+  margin-bottom: 20px;
+}
+
 .row {
   width: 100%;
   display: flex;
