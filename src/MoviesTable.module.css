@@ -18,6 +18,34 @@
   padding-top: 10px;
   padding-bottom: 10px;
   background-color: lightblue;
+  cursor: pointer;
+}
+
+.asc,
+.desc {
+  position: relative;
+}
+
+.asc::after,
+.desc::after {
+  position: absolute;
+  content: '';
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  padding: 3px;
+  top: 5px;
+  right: 15px;
+}
+
+.desc::after {
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.asc::after {
+  transform: rotate(-135deg);
+  -webkit-transform: rotate(-135deg);
 }
 
 .cell {

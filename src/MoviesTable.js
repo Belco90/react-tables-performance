@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList } from 'react-window';
 import { orderBy } from 'lodash';
+import cn from 'classnames';
 import MovieRow from './MovieRow';
 import MoviesTableVirtualizedRow from './MoviesTableVirtualizedRow';
 import { MoviesContextProvider } from './movies-context';
@@ -68,12 +69,20 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
           {COLS_ORDER.map(column => (
             <div
               key={column}
-              className={`${styles.cell} ${styles[column]}`}
+              className={cn(styles.cell, styles[column], {
+                [styles.asc]:
+                  sortCriteria &&
+                  sortCriteria.includes(column) &&
+                  !sortCriteria.startsWith('-'),
+                [styles.desc]:
+                  sortCriteria &&
+                  sortCriteria.includes(column) &&
+                  sortCriteria.startsWith('-'),
+              })}
               role="button"
               tabIndex="0"
               onClick={() => sortMoviesBy(column)}
             >
-              {/* TODO: show sorting indicator with classnames */}
               {column}
             </div>
           ))}
