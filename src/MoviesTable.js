@@ -81,8 +81,8 @@ const MoviesTable = ({ children: initialMovies, isVirtualized }) => {
 
   React.useEffect(() => {
     // scroll to the top when movies updated by any reason
-    listRef.current.scrollToItem(0);
-  }, [initialMovies, refinedMovies, listRef]);
+    isVirtualized ? listRef.current.scrollToItem(0) : window.scrollTo(0, 0);
+  }, [initialMovies, refinedMovies, listRef, isVirtualized]);
 
   React.useEffect(() => {
     // filter movies when title value updated
